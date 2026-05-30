@@ -13,7 +13,8 @@ let package = Package(
   targets: [
     .binaryTarget(
       name: "mujoco",
-      path: "output/mujoco.xcframework"
+      url: "https://github.com/tatsuya-ogawa/mujoco-ios/releases/download/v0.1.0/mujoco.xcframework.zip",
+      checksum: "c60d1f0a6bacd1dd89c4d04567f9eb85372c57c8ff0c5664814bc113be588082"
     ),
     .target(
       name: "MuJoCo",
