@@ -56,7 +56,7 @@ jobs:
         run: make package-release
 
       - name: Create or update GitHub Release
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         env:
           RELEASE_TAG: ${{ steps.release-tag.outputs.tag }}
         with:
