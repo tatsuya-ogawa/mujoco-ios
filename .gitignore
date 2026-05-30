@@ -1,0 +1,13 @@
+/mujoco/
+/build/
+/output/
+/dist/
+.build/
+.swiftpm/
+
+# Xcode local state
+DerivedData/
+*.xcuserstate
+**/xcuserdata/
+
+.DS_Store

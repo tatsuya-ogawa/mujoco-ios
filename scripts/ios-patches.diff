@@ -1,0 +1,73 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -41,6 +41,9 @@ enable_language(CXX)
+ 
+ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+ 
++# iOS static build (added by mujoco-ios build script).
++option(MUJOCO_BUILD_IOS_STATIC "Build MuJoCo as a static library for iOS" OFF)
++
+ if(NOT EMSCRIPTEN)
+   option(MUJOCO_BUILD_EXAMPLES "Build samples for MuJoCo" ON)
+   option(MUJOCO_BUILD_SIMULATE "Build simulate library for MuJoCo" ON)
+@@ -135,7 +138,7 @@ else()
+ endif()
+ 
+ # Emscripten does not support SHARED libs
+-if(NOT EMSCRIPTEN)
++if(NOT EMSCRIPTEN AND NOT MUJOCO_BUILD_IOS_STATIC)
+   add_library(mujoco SHARED ${MUJOCO_RESOURCE_FILES})
+ else()
+   add_library(mujoco STATIC ${MUJOCO_RESOURCE_FILES})
+@@ -148,7 +151,7 @@ target_include_directories(
+   PRIVATE src
+ )
+ 
+-if(NOT EMSCRIPTEN)
++if(NOT EMSCRIPTEN AND NOT MUJOCO_BUILD_IOS_STATIC)
+   add_subdirectory(plugin/elasticity)
+   add_subdirectory(plugin/actuator)
+   add_subdirectory(plugin/sensor)
+@@ -162,7 +165,7 @@ add_subdirectory(src/user)
+ add_subdirectory(src/xml)
+ add_subdirectory(src/xml/mjz)
+ add_subdirectory(src/thread)
+-if(NOT EMSCRIPTEN AND NOT MUJOCO_USE_FILAMENT_MJR_COMPAT)
++if(NOT EMSCRIPTEN AND NOT MUJOCO_USE_FILAMENT_MJR_COMPAT AND NOT MUJOCO_BUILD_IOS_STATIC)
+   add_subdirectory(src/render/classic)
+   add_subdirectory(src/ui)
+ endif()
+@@ -303,7 +306,7 @@ if(BUILD_TESTING AND MUJOCO_BUILD_TESTS)
+   endif()
+ endif()
+ 
+-if(NOT EMSCRIPTEN AND NOT (APPLE AND MUJOCO_BUILD_MACOS_FRAMEWORKS))
++if(NOT EMSCRIPTEN AND NOT (APPLE AND MUJOCO_BUILD_MACOS_FRAMEWORKS) AND NOT MUJOCO_BUILD_IOS_STATIC)
+   set(MUJOCO_TARGETS mujoco)
+ 
+   # Install the libraries.
+diff --git a/cmake/MujocoMacOS.cmake b/cmake/MujocoMacOS.cmake
+--- a/cmake/MujocoMacOS.cmake
++++ b/cmake/MujocoMacOS.cmake
+@@ -12,7 +12,7 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
+-if(APPLE)
++if(APPLE AND NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
+   # Target the oldest version of macOS that is still supported by Apple.
+   # We follow https://endoflife.date/macos, which considers a version to become
+   # unsupported the first time it is excluded from a macOS security update
+diff --git a/cmake/MujocoOptions.cmake b/cmake/MujocoOptions.cmake
+--- a/cmake/MujocoOptions.cmake
++++ b/cmake/MujocoOptions.cmake
+@@ -109,7 +109,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang
+   endif()
+ endif()
+ 
+-if(NOT CMAKE_INTERPROCEDURAL_OPTIMIZATION AND (CMAKE_BUILD_TYPE AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug"))
++if(NOT MUJOCO_BUILD_IOS_STATIC AND NOT DEFINED CMAKE_INTERPROCEDURAL_OPTIMIZATION AND (CMAKE_BUILD_TYPE AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug"))
+   set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
+ endif()
+ 

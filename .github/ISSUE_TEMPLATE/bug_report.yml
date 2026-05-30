@@ -1,0 +1,38 @@
+name: Bug report
+description: Report a reproducible issue with the build, package, or example app.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What went wrong?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction Steps
+      description: Provide the smallest set of steps needed to reproduce the issue.
+      placeholder: |
+        1. Run `make download`
+        2. Run `make build`
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: xcode
+    attributes:
+      label: Xcode Version
+      placeholder: Xcode 16.4
+  - type: input
+    id: ios
+    attributes:
+      label: iOS SDK / Target
+      placeholder: iOS 18.5 simulator, iPhone device, etc.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs
+      render: shell
